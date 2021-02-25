@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:preferences/preferences.dart';
 
-void main() {
+import 'settings.dart';
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+void main() async {
+  await PrefService.init(prefix: 'pref_');
   runApp(MyApp());
 }
 
@@ -9,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Bluetooth Devices',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -72,10 +78,34 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        centerTitle: true,
+        title: Center(
+            child: Text('Bluetooth Supercharged',
+                style: TextStyle(
+                  color: Colors.black87,
+                ))),
+        backgroundColor: Colors.white,
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: menuChoice,
+            icon: Icon(
+              Icons.more_vert,
+              color: Colors.black87,
+            ),
+            itemBuilder: (BuildContext context) {
+              return Menu.choices.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -107,11 +137,47 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  void menuChoice(String choice) {
+    if (choice == Menu.Settings) {
+      Navigator.push(_scaffoldKey.currentContext,
+          MaterialPageRoute(builder: (context) => SettingsPage()));
+      // } else if (choice == Menu.Subscribe) {
+      //   //print('Subscribe');
+      // } else if (choice == Menu.SignOut) {
+      //   //print('SignOut');
+      // } else if (choice == Menu.History) {
+      //   Navigator.push(_scaffoldKey.currentContext,
+      //       MaterialPageRoute(builder: (context) => HistoryPage()));
+    } else {
+      //Doesn't work?
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('This functions is not implemented yet.'),
+        action: SnackBarAction(label: 'OK', onPressed: () {}),
+      ));
+    }
+  }
+}
+
+class Menu {
+  // static const String Subscribe = 'Subscribe';
+  static const String Settings = 'Settings';
+  // static const String SignOut = 'Sign out';
+  // static const String History = 'History';
+  // static const String SupportedCars = 'Supported Cars';
+  static const String About = 'About';
+  static const String Feedback = 'Feedback'; //TODO: add multi lang support
+
+  static const List<String> choices = <String>[
+    Settings,
+    // About,
+    // Feedback
+  ];
 }

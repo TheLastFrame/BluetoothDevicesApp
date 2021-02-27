@@ -36,7 +36,7 @@ Please refer to the Wiki page of supported devices and which functionallities ar
 
 Supporting this project either in the form of coding, translating or testing is very welcomed.
 Please refer to the wiki for how to support the project.
-
+<br><br>
 If this project may really booms, I may think about bringing it officially to the App Stores.
 
 
